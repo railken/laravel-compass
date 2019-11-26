@@ -1,12 +1,14 @@
 <script>
 import axios from 'axios';
 import HttpMethods from './HttpMethods'
+import RouteGroup from './RouteGroup'
 
 export default {
     props: [],
 
     components: {
-        HttpMethods
+        HttpMethods,
+        RouteGroup
     },
 
     data() {
@@ -38,7 +40,6 @@ export default {
     }
 }
 </script>
-
 <template>
     <section class="bg-white border-gray-200 border-r md:w-72">
         <div class="flex justify-between px-4 py-3 bg-secondary">
@@ -100,19 +101,7 @@ export default {
                     </ul>
 
                     <div v-if="currentTab=='group'">
-                        <details class="sm:mb-2 cursor-pointer" v-for="(resources, name) in requests.group" :key="name">
-                            <summary class="px-2 -mx-2 py-1 hover:text-orange-600 focus:text-orange-600 text-gray-600 font-medium capitalize">
-                                {{name}}
-                            </summary>
-                            <ul class="ml-4">
-                                <li class="sm:mb-2" v-for="request in resources" :key="request.id">
-                                    <router-link :to="{name:'request', params:{id: request.id}}" active-class="text-orange-600" class="text-md px-2 -mx-2 py-1 hover:text-orange-600 text-gray-600">
-                                        <http-methods :request="request" />
-                                        <span class="ml-2">{{truncateString(request.title, 20)}}</span>
-                                    </router-link>
-                                </li>
-                            </ul>
-                        </details>
+                        <route-group :routes="requests.group" />
                     </div>
                 </div>
             </div>
