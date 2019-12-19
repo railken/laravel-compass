@@ -115,11 +115,13 @@ class Compass
 
             foreach ($parts as $n => $part) {
                 if (strpos($part, '{') !== false) {
+                    $n--;
                     break;
                 }
             }
 
-            $name = implode(".children.", array_slice($parts, 0, $n));
+
+            $name = implode(".children.", array_slice($parts, 0, $n+1));
 
             $last = $route->id;
 
