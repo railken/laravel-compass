@@ -2,7 +2,6 @@
 
 namespace Davidhsianturi\Compass\Tests\Storage;
 
-use Davidhsianturi\Compass\Compass;
 use Davidhsianturi\Compass\Tests\TestCase;
 use Davidhsianturi\Compass\Storage\RouteModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -52,7 +51,7 @@ class DatabaseResponseRepositoryTest extends TestCase
     {
         $this->registerAppRoutes();
 
-        $route = Compass::getAppRoutes()->random();
+        $route = app('compass')->getAppRoutes()->random();
 
         return factory(RouteModel::class)->create([
             'route_hash' => $route['route_hash'],

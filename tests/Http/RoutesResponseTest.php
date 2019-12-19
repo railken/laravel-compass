@@ -2,7 +2,6 @@
 
 namespace Davidhsianturi\Compass\Tests\Http;
 
-use Davidhsianturi\Compass\Compass;
 use Davidhsianturi\Compass\Tests\TestCase;
 use Davidhsianturi\Compass\Storage\RouteModel;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,7 +26,7 @@ class RoutesResponseTest extends TestCase
     {
         $this->registerAppRoutes();
 
-        $route = Compass::getAppRoutes()->random();
+        $route = app('compass')->getAppRoutes()->random();
 
         $exampleData = factory(RouteModel::class)->raw([
             'uuid' => $route['uuid'],
@@ -81,7 +80,7 @@ class RoutesResponseTest extends TestCase
     {
         $this->registerAppRoutes();
 
-        $route = Compass::getAppRoutes()->random();
+        $route = app('compass')->getAppRoutes()->random();
 
         return factory(RouteModel::class)->create([
             'route_hash' => $route['route_hash'],

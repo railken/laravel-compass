@@ -4,6 +4,7 @@ namespace Davidhsianturi\Compass;
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
+use Davidhsianturi\Compass\Contracts\CompassContract;
 use Davidhsianturi\Compass\Contracts\ApiDocsRepository;
 use Davidhsianturi\Compass\Contracts\RequestRepository;
 use Davidhsianturi\Compass\Contracts\ResponseRepository;
@@ -24,7 +25,8 @@ class CompassServiceProvider extends ServiceProvider
         $this->registerPublishing();
 
         $this->loadViewsFrom(
-            __DIR__.'/../resources/views', 'compass'
+            __DIR__.'/../resources/views',
+            'compass'
         );
     }
 
@@ -62,7 +64,7 @@ class CompassServiceProvider extends ServiceProvider
      */
     protected function shouldMigrate()
     {
-        return Compass::$runsMigrations && config('compass.driver') === 'database';
+        return app('compass')->runsMigrations && config('compass.driver') === 'database';
     }
 
     /**
@@ -99,7 +101,8 @@ class CompassServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/compass.php', 'compass'
+            __DIR__.'/../config/compass.php',
+            'compass'
         );
 
         $this->registerStorageDriver();
@@ -111,6 +114,13 @@ class CompassServiceProvider extends ServiceProvider
             Console\BuildCommand::class,
             Console\RebuildCommand::class,
         ]);
+
+        $this->app->singleton(
+            CompassContract::class,
+            Compass::class
+        );
+
+        $this->app->bind('compass', CompassContract::class);
     }
 
     /**
@@ -135,11 +145,13 @@ class CompassServiceProvider extends ServiceProvider
     protected function registerDatabaseDriver()
     {
         $this->app->singleton(
-            RequestRepository::class, DatabaseRequestRepository::class
+            RequestRepository::class,
+            DatabaseRequestRepository::class
         );
 
         $this->app->singleton(
-            ResponseRepository::class, DatabaseResponseRepository::class
+            ResponseRepository::class,
+            DatabaseResponseRepository::class
         );
 
         $this->app->when(DatabaseRequestRepository::class)
@@ -169,7 +181,8 @@ class CompassServiceProvider extends ServiceProvider
     protected function registerSlateBuilder()
     {
         $this->app->singleton(
-            ApiDocsRepository::class, SlateBuilder::class
+            ApiDocsRepository::class,
+            SlateBuilder::class
         );
     }
 }

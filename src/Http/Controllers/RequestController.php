@@ -2,7 +2,6 @@
 
 namespace Davidhsianturi\Compass\Http\Controllers;
 
-use Davidhsianturi\Compass\Compass;
 use Davidhsianturi\Compass\Contracts\RequestRepository;
 
 class RequestController
@@ -36,7 +35,7 @@ class RequestController
         return response()->json([
             'data' => [
                 'list' => $requests,
-                'group' => Compass::groupingRoutes($requests),
+                'group' => app('compass')->groupingRoutes($requests),
             ],
         ]);
     }

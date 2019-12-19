@@ -9,24 +9,24 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route as RouteFacade;
 use Illuminate\Support\Arr;
 
-final class Compass
+class Compass
 {
     /**
      * Indicates if Compass migrations will be run.
      *
      * @var bool
      */
-    public static $runsMigrations = true;
+    public $runsMigrations = true;
 
     /**
      * Get the application routes.
      *
      * @return \Illuminate\Support\Collection
      */
-    public static function getAppRoutes()
+    public function getAppRoutes()
     {
         return collect(RouteFacade::getRoutes())->map(function ($route) {
-            return static::getRouteInformation($route);
+            return $this->getRouteInformation($route);
         })->filter();
     }
 
@@ -36,12 +36,12 @@ final class Compass
      * @param  \Illuminate\Routing\Route  $route
      * @return array
      */
-    protected static function getRouteInformation(Route $route)
+    protected function getRouteInformation(Route $route)
     {
         $methods = array_values(array_diff($route->methods(), ['HEAD']));
         $baseUri = config('compass.routes.base_uri');
 
-        return static::filterRoute([
+        return $this->filterRoute([
             'uuid' => null,
             'title' => Str::after($route->uri(), $baseUri),
             'description' => null,
@@ -64,7 +64,7 @@ final class Compass
      * @param  array  $route
      * @return array|null
      */
-    protected static function filterRoute(array $route)
+    protected function filterRoute(array $route)
     {
         $routeRules = config('compass.routes');
 
@@ -84,9 +84,9 @@ final class Compass
      * @param  array  $routeInStorage
      * @return \Illuminate\Support\Collection
      */
-    public static function syncRoute(array $routeInStorage)
+    public function syncRoute(array $routeInStorage)
     {
-        return static::getAppRoutes()->map(function ($appRoute) use ($routeInStorage) {
+        return $this->getAppRoutes()->map(function ($appRoute) use ($routeInStorage) {
             $route = collect($routeInStorage)
                 ->where('route_hash', $appRoute['route_hash'])
                 ->collapse()
@@ -102,7 +102,7 @@ final class Compass
      * @param  \Illuminate\Support\Collection|\Davidhsianturi\Compass\RouteResult[]  $routes
      * @return \Illuminate\Support\Collection|\Davidhsianturi\Compass\RouteResult[]
      */
-    public static function groupingRoutes(Collection $routes)
+    public function groupingRoutes(Collection $routes)
     {
         $baseUri = config('compass.routes.base_uri');
 
@@ -134,7 +134,7 @@ final class Compass
      *
      * @return array
      */
-    public static function scriptVariables()
+    public function scriptVariables()
     {
         return [
             'path' => config('compass.path'),
@@ -150,11 +150,11 @@ final class Compass
      *
      * @return static
      */
-    public static function ignoreMigrations()
+    public function ignoreMigrations()
     {
-        static::$runsMigrations = false;
+        $this->runsMigrations = false;
 
-        return new static;
+        return $this;
     }
 
     /**
@@ -165,7 +165,7 @@ final class Compass
      * @throws \Illuminate\Contracts\Filesystem\FileNotFoundException
      * @return bool
      */
-    public static function assetsAreCurrent()
+    public function assetsAreCurrent()
     {
         $publishedPath = public_path('vendor/compass/mix-manifest.json');
 

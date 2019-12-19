@@ -5,7 +5,6 @@ namespace Davidhsianturi\Compass\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Davidhsianturi\Compass\Compass;
 use Davidhsianturi\Compass\RouteResult;
 use Davidhsianturi\Compass\Contracts\RequestRepository;
 
@@ -36,7 +35,7 @@ class DatabaseRequestRepository implements RequestRepository
      */
     public function get()
     {
-        return Compass::syncRoute($this->routesInStorage())->map(function ($route) {
+        return app('compass')->syncRoute($this->routesInStorage())->map(function ($route) {
             return $this->routeResult($route, []);
         });
     }
@@ -49,7 +48,7 @@ class DatabaseRequestRepository implements RequestRepository
      */
     public function find(string $id): RouteResult
     {
-        $route = Compass::syncRoute($this->routesInStorage())
+        $route = app('compass')->syncRoute($this->routesInStorage())
             ->whereStrict('route_hash', $id)
             ->first();
 
@@ -81,7 +80,7 @@ class DatabaseRequestRepository implements RequestRepository
             ]
         );
 
-        $syncedRoute = Compass::syncRoute($store->get()->toArray())
+        $syncedRoute = app('compass')->syncRoute($store->get()->toArray())
             ->whereStrict('uuid', $store->uuid)
             ->first();
 
