@@ -40,10 +40,10 @@ class Compass
     {
         $methods = array_values(array_diff($route->methods(), ['HEAD']));
         $baseUri = config('compass.routes.base_uri');
-
+        $parts = explode(".", $route->getName());
         return $this->filterRoute([
             'uuid' => null,
-            'title' => Str::after($route->uri(), $baseUri),
+            'title' => end($parts),
             'description' => null,
             'content' => [],
             'example' => false,
