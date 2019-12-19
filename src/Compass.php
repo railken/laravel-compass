@@ -7,6 +7,7 @@ use Illuminate\Routing\Route;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route as RouteFacade;
+use Illuminate\Support\Arr;
 
 final class Compass
 {
@@ -105,13 +106,27 @@ final class Compass
     {
         $baseUri = config('compass.routes.base_uri');
 
-        return $routes->groupBy(function ($route) use ($baseUri) {
-            if (is_object($route)) {
-                return strtok(Str::after($route->info['uri'], $baseUri), '/');
+        $groups = [];
+
+        foreach ($routes as $route) {
+            $uri = is_object($route) ? $route->info['uri'] : $route['uri'];
+
+            $parts = explode("/", $uri);
+
+            foreach ($parts as $n => $part) {
+                if (strpos($part, '{') !== false) {
+                    break;
+                }
             }
 
-            return strtok(Str::after($route['uri'], $baseUri), '/');
-        });
+            $name = implode(".children.", array_slice($parts, 0, $n));
+
+            $last = $route->id;
+
+            Arr::set($groups, $name.".routes.".$last, $route);
+        }
+
+        return $groups;
     }
 
     /**
